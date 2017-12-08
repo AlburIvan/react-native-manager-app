@@ -7,6 +7,10 @@ import {
   Button
 } from "react-native";
 import firebase from "firebase";
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import reducers from './src/reducers';
+
 import Config from 'react-native-config';
 
 
@@ -17,58 +21,38 @@ export default class App extends Component {
   state = { loggedIn: null };
 
   componentWillMount() {
-    console.log(Config);
-
     firebase.initializeApp({
-      apiKey: Config.FIREBASE_API_KEY,
-      authDomain:  Config.FIREBASE_AUTH_DOMAIN,
-      databaseURL:  Config.FIREBASE_DATABSE_URL,
-      projectId:  Config.FIREBASE_PROJECT_ID,
-      storageBucket:  Config.FIREBASE_STORAGE_BUCKET,
-      messagingSenderId:  Config.FIREBASE_SENDER_ID
+        apiKey: Config.FIREBASE_API_KEY,
+        authDomain: Config.FIREBASE_AUTH_DOMAIN,
+        databaseURL: Config.FIREBASE_DATABSE_URL,
+        projectId: Config.FIREBASE_PROJECT_ID,
+        storageBucket: Config.FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: Config.FIREBASE_SENDER_ID
     });
 
     firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        this.setState({ loggedIn: true });
-      } else {
-        this.setState({ loggedIn: false });
-      }
+        if (user) {
+            this.setState({ loggedIn: true });
+        } else {
+            this.setState({ loggedIn: false });
+        }
     });
 
     this._onLogoutPressed.bind(this)
   }
 
   _onLogoutPressed = () => {
-    firebase.auth().signOut();
-    this.setState({ loggedIn: false });
+        firebase.auth().signOut();
+        this.setState({ loggedIn: false });
   };
 
-  // _renderContent = () => {
-  //   switch (this.state.loggedIn) {
-  //     case true:
-  //       return (
-  //           <View style={styles.signinField}>
-  //             <TouchableHighlight onPress={this._onLogoutPressed} underlayColor="white">
-  //                 <View style={styles.signinButton}>
-  //                     <Text style={styles.buttonText}>
-  //                         {'Sign out'.toUpperCase()}
-  //                     </Text>
-  //                 </View>
-  //             </TouchableHighlight>
-  //           </View>
-  //       );
-
-  //     case false:
-  //       return <LoginForm />;
-
-  //     default:
-  //         <Spinner size="large" />
-  //   }
-  // };
 
   render() {
-    return <LoginForm />;
+    return(
+      <Provider store={createStore(reducers)}>
+        <LoginForm />
+      </Provider>
+    );
   }
 }
 
