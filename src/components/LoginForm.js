@@ -10,12 +10,20 @@ import {
     ScrollView,
     StyleSheet
 } from "react-native";
+import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import firebase from "firebase";
-import { connect } from 'react-redux';
-import { emailChanged } from '../actions';
-
-import { Card, CardSection, Input } from "./common";
+import { 
+    emailChanged, 
+    passwordChanged,
+    loginUser,
+    signupUser
+} from '../actions';
+import {
+     Card, 
+     CardSection, 
+     Input 
+} from "./common";
 import ChromelogoIcon from "../../assets/icons/chromelogo.icon";
 import CancelIcon from "../../assets/icons/cancel.icon";
 
@@ -25,10 +33,10 @@ class LoginForm extends Component {
         super(props);
 
         this.state = {
-            email: "",
-            password: "",
+            email: '',
+            password: '',
             loading: false,
-            error: "",
+            hasError: false,
             errMessage:
                 "Unfortunately, we weren't able to authorize this account, try again.",
             modalVisible: false
@@ -65,44 +73,62 @@ class LoginForm extends Component {
     /**
      * functions that handles if the user's login attempt was failed
      */
-    _onLoginFailed = err => {
-            this.setState({
-            password: "",
-            error: err.code,
-            errMessage: err.message,
+    resetErrorState = () => {
+
+        console.log('resetErrorState()');
+
+        this.setState({
+            hasError: false,
+            errMessage: '',
             loading: false,
-            modalVisible: true
+            modalVisible: false
         });
+
+        if(this.props.error) {
+            this.props.error = null;
+        }
     };
 
 
     _onSignupButtonPressed = () => {
-        const { email, password } = this.state;
-
-        firebase
-            .auth()
-            .createUserWithEmailAndPassword(email, password)
-            .then(this._onLoginSuccess.bind(this))
-            .catch(this._onLoginFailed.bind(this));
+        const { email, password } = this.props;
+        this.props.signupUser({email, password});
     };
 
    
 
     _onLoginButtonPress = () => {
-        const { email, password } = this.state;
-
-        this.setState({ error: "", loading: true });
-
-        firebase
-            .auth()
-            .signInWithEmailAndPassword(email, password)
-            .then(this._onLoginSuccess.bind(this))
-            .catch(this._onLoginFailed.bind(this));
+        const { email, password } = this.props;
+        this.props.loginUser({email, password});
     };
 
 
     _onEmailChanged = (text) => {
         this.props.emailChanged(text); 
+    }
+
+    _onPasswordChanged = (text) => {
+        this.props.passwordChanged(text);
+    }
+
+
+    componentWillReceiveProps(nextProps) {
+        console.log('componentWillReceiveProps()');
+
+        console.log('current props: ', this.props);
+        console.log('current state: ', this.state);
+        console.log('next props: ', nextProps);
+
+
+        if(nextProps.error) {
+            this.setState({
+                password: '',
+                hasError: true,
+                errMessage: nextProps.error.message,
+                loading: false,
+                modalVisible: true
+            });
+        }
     }
 
     render() {
@@ -114,126 +140,128 @@ class LoginForm extends Component {
                 scrollEnabled={true}>
 
                 <View style={styles.container}>
-                <ScrollView
-                    style={styles.scrollviewContainer}
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{ flexGrow: 1 }}>
+                    <ScrollView
+                        style={styles.scrollviewContainer}
+                        showsVerticalScrollIndicator={false}
+                        contentContainerStyle={{ flexGrow: 1 }}>
 
-                    <View style={styles.welcomeContainer}>
-                    <View style={styles.logoWrapper}>
-                        <View style={styles.icon}>
-                        <ChromelogoIcon width={75} height={75} />
+                        <View style={styles.welcomeContainer}>
+                            <View style={styles.logoWrapper}>
+                                <View style={styles.icon}>
+                                    <ChromelogoIcon width={75} height={75} />
+                                </View>
+                            </View>
+
+                            <View style={styles.welcomeTitleWrapper}>
+                                <Text style={styles.welcomeText}>Welcome to Udemy</Text>
+                            </View>
+
+                            <View style={styles.welcomeSubTitleWrapper}>
+                                <Text style={styles.welcomeSubTitleText}>
+                                    The Complete React Native and Redux Course
+                                </Text>
+                            </View>
                         </View>
-                    </View>
 
-                    <View style={styles.welcomeTitleWrapper}>
-                        <Text style={styles.welcomeText}>Welcome to Udemy</Text>
-                    </View>
+                        <View style={styles.loginContainer}>
+                            <View style={styles.usernameField}>
+                                <Text style={styles.usernameLabel}>Email</Text>
+                                <TextInput
+                                    style={styles.usernameInput}
+                                    autoCorrect={false}
+                                    keyboardType={"email-address"}
+                                    underlineColorAndroid={"#D2D2D3"}
+                                    value={this.props.email}
+                                    placeholder="hello@reactcourse.com"
+                                    onChangeText={this._onEmailChanged.bind(this)}
+                                />
+                            </View>
+                            <View style={styles.passwordField}>
+                                <Text style={styles.passwordLabel}>Password</Text>
+                                <TextInput
+                                    style={styles.passwordInput}
+                                    secureTextEntry={true}
+                                    value={this.props.password}
+                                    underlineColorAndroid={"#D2D2D3"}
+                                    onChangeText={this._onPasswordChanged.bind(this)}
+                                />
+                            </View>
+                            <View style={styles.signinField}>
+                                <TouchableHighlight
+                                    onPress={this._onLoginButtonPress.bind(this)}
+                                    underlayColor="white">
+                                    <View style={styles.signinButton}>{this.renderButton()}</View>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
 
-                    <View style={styles.welcomeSubTitleWrapper}>
-                        <Text style={styles.welcomeSubTitleText}>
-                        The Complete React Native and Redux Course
-                        </Text>
-                    </View>
-                    </View>
-
-                    <View style={styles.loginContainer}>
-                    <View style={styles.usernameField}>
-                        <Text style={styles.usernameLabel}>Email</Text>
-                        <TextInput
-                            style={styles.usernameInput}
-                            autoCorrect={false}
-                            keyboardType={"email-address"}
-                            underlineColorAndroid={"#D2D2D3"}
-                            value={this.props.email}
-                            placeholder="hello@reactcourse.com"
-                            onChangeText={this._onEmailChanged.bind(this)}
-                        />
-                    </View>
-                    <View style={styles.passwordField}>
-                        <Text style={styles.passwordLabel}>Password</Text>
-                        <TextInput
-                            style={styles.passwordInput}
-                            secureTextEntry={true}
-                            value={this.state.password}
-                            underlineColorAndroid={"#D2D2D3"}
-                            onChangeText={password => this.setState({ password })}
-                        />
-                    </View>
-                    <View style={styles.signinField}>
+                        <View style={styles.signupContainer}>
                         <TouchableHighlight
-                            onPress={this._onLoginButtonPress.bind(this)}
-                            underlayColor="white"
-                        >
-                            <View style={styles.signinButton}>{this.renderButton()}</View>
+                            onPress={this._onSignupButtonPressed.bind(this)}
+                            underlayColor="white">
+                            <Text style={styles.signupLabel}>Sign up for an account</Text>
                         </TouchableHighlight>
-                    </View>
-                    </View>
-
-                    <View style={styles.signupContainer}>
-                    <TouchableHighlight
-                        onPress={this._onSignupButtonPressed.bind(this)}
-                        underlayColor="white">
-                        <Text style={styles.signupLabel}>Sign up for an account</Text>
-                    </TouchableHighlight>
-                    </View>
-                </ScrollView>
+                        </View>
+                    </ScrollView>
                 </View>
 
                 <Modal
                     animationType="fade"
                     transparent={true}
-                    visible={this.state.modalVisible}
-                    onRequestClose={() => {
-                        this.setState({ modalVisible: false });
-                    }}>
-                <View style={styles.modalBackground}>
-                    <View style={{ flex: 1 }} />
-                    <View style={styles.modalContainer}>
-                    <View style={styles.modalTitle}>
-                        <Text style={styles.modalTitleText}>Oops!</Text>
-                    </View>
+                    visible={this.state.modalVisible && this.state.hasError}
+                    onRequestClose={null}>
+                    <View style={styles.modalBackground}>
+                        <View style={{ flex: 1 }} />
+                        <View style={styles.modalContainer}>
+                            <View style={styles.modalTitle}>
+                                <Text style={styles.modalTitleText}>Oops!</Text>
+                            </View>
 
-                    <View style={styles.modalBody}>
-                        <View style={styles.modalBodyIcon}>
-                        <CancelIcon width={50} height={50} />
-                        </View>
-                        <View style={styles.modalBodyText}>
-                        <Text style={styles.modalBodyTextStyle}>
-                            {this.state.errMessage}
-                        </Text>
-                        </View>
-                    </View>
+                            <View style={styles.modalBody}>
+                                <View style={styles.modalBodyIcon}>
+                                    <CancelIcon width={50} height={50} />
+                                </View>
+                                <View style={styles.modalBodyText}>
+                                    <Text style={styles.modalBodyTextStyle}>
+                                        {this.state.errMessage}
+                                    </Text>
+                                </View>
+                            </View>
 
-                    <View style={styles.modalButton}>
-                        <TouchableWithoutFeedback
-                        onPress={() => {
-                            this.setState({ modalVisible: false });
-                        }}
-                        >
-                        <View>
-                            <Text style={styles.modalButtonTextStyle}>
-                            {"Got it!".toUpperCase()}
-                            </Text>
+                            <View style={styles.modalButton}>
+                                <TouchableWithoutFeedback
+                                onPress={this.resetErrorState.bind(this)}>
+                                    <View>
+                                        <Text style={styles.modalButtonTextStyle}>
+                                            {"Got it!".toUpperCase()}
+                                        </Text>
+                                    </View>
+                                </TouchableWithoutFeedback>
+                            </View>
                         </View>
-                        </TouchableWithoutFeedback>
+                        <View style={{ flex: 1 }} />
                     </View>
-                    </View>
-                    <View style={{ flex: 1 }} />
-                </View>
                 </Modal>
             </KeyboardAwareScrollView>
         );
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
+
+    console.log('mapStateToProps', state);
+
     return {
-        email: state.auth.email
+        email: state.auth.email,
+        password: state.auth.password,
+        user: state.auth.user,
+        error: state.auth.error
     };
 };
 
-export default connect(mapStateToProps, { emailChanged })(LoginForm);
+export default connect(mapStateToProps, { 
+    emailChanged, passwordChanged, loginUser, signupUser
+})(LoginForm);
 
 const styles = StyleSheet.create({
     kawarecontainer: {
