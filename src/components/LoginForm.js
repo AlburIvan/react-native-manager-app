@@ -37,10 +37,14 @@ class LoginForm extends Component {
             password: '',
             loading: false,
             hasError: false,
-            errMessage:
-                "Unfortunately, we weren't able to authorize this account, try again.",
+            errMessage: "Unfortunately, we weren't able to authorize this account, try again.",
             modalVisible: false
         };
+
+        this.onLoginButtonPress     = this._onLoginButtonPress.bind(this);
+        this.onPasswordChanged      = this._onPasswordChanged.bind(this);
+        this.onEmailChanged         = this._onEmailChanged.bind(this);
+        this.onSignupButtonPressed  = this._onSignupButtonPressed.bind(this);
     }
 
     /**
@@ -70,25 +74,6 @@ class LoginForm extends Component {
         });
     };
 
-    /**
-     * functions that handles if the user's login attempt was failed
-     */
-    resetErrorState = () => {
-
-        console.log('resetErrorState()');
-
-        this.setState({
-            hasError: false,
-            errMessage: '',
-            loading: false,
-            modalVisible: false
-        });
-
-        if(this.props.error) {
-            this.props.error = null;
-        }
-    };
-
 
     _onSignupButtonPressed = () => {
         const { email, password } = this.props;
@@ -99,6 +84,11 @@ class LoginForm extends Component {
 
     _onLoginButtonPress = () => {
         const { email, password } = this.props;
+        
+        this.setState({
+            loading: true,
+        });
+
         this.props.loginUser({email, password});
     };
 
@@ -111,14 +101,28 @@ class LoginForm extends Component {
         this.props.passwordChanged(text);
     }
 
+    
+    /**
+     * functions that handles if the user's login attempt was failed
+     */
+    resetErrorState = () => {
+        if(this.state.hasError) {
+            console.log('resetErrorState()');
+
+            this.setState({
+                hasError: false,
+                errMessage: '',
+                loading: false,
+                modalVisible: false
+            });
+        }
+    };
+
 
     componentWillReceiveProps(nextProps) {
-        console.log('componentWillReceiveProps()');
-
-        console.log('current props: ', this.props);
-        console.log('current state: ', this.state);
-        console.log('next props: ', nextProps);
-
+        this.setState({
+            loading: false
+        });
 
         if(nextProps.error) {
             this.setState({
@@ -128,8 +132,10 @@ class LoginForm extends Component {
                 loading: false,
                 modalVisible: true
             });
+        } else {
+            this.resetErrorState();
         }
-    }
+    } 
 
     render() {
         return (
@@ -173,7 +179,7 @@ class LoginForm extends Component {
                                     underlineColorAndroid={"#D2D2D3"}
                                     value={this.props.email}
                                     placeholder="hello@reactcourse.com"
-                                    onChangeText={this._onEmailChanged.bind(this)}
+                                    onChangeText={this.onEmailChanged}
                                 />
                             </View>
                             <View style={styles.passwordField}>
@@ -183,12 +189,12 @@ class LoginForm extends Component {
                                     secureTextEntry={true}
                                     value={this.props.password}
                                     underlineColorAndroid={"#D2D2D3"}
-                                    onChangeText={this._onPasswordChanged.bind(this)}
+                                    onChangeText={this.onPasswordChanged}
                                 />
                             </View>
                             <View style={styles.signinField}>
                                 <TouchableHighlight
-                                    onPress={this._onLoginButtonPress.bind(this)}
+                                    onPress={this.onLoginButtonPress}
                                     underlayColor="white">
                                     <View style={styles.signinButton}>{this.renderButton()}</View>
                                 </TouchableHighlight>
@@ -197,7 +203,7 @@ class LoginForm extends Component {
 
                         <View style={styles.signupContainer}>
                         <TouchableHighlight
-                            onPress={this._onSignupButtonPressed.bind(this)}
+                            onPress={this.onSignupButtonPressed}
                             underlayColor="white">
                             <Text style={styles.signupLabel}>Sign up for an account</Text>
                         </TouchableHighlight>
@@ -209,7 +215,7 @@ class LoginForm extends Component {
                     animationType="fade"
                     transparent={true}
                     visible={this.state.modalVisible && this.state.hasError}
-                    onRequestClose={null}>
+                    onRequestClose={()=> this.setState({modalVisible: false})}>
                     <View style={styles.modalBackground}>
                         <View style={{ flex: 1 }} />
                         <View style={styles.modalContainer}>
@@ -230,7 +236,7 @@ class LoginForm extends Component {
 
                             <View style={styles.modalButton}>
                                 <TouchableWithoutFeedback
-                                onPress={this.resetErrorState.bind(this)}>
+                                    onPress={this.resetErrorState.bind(this)}>
                                     <View>
                                         <Text style={styles.modalButtonTextStyle}>
                                             {"Got it!".toUpperCase()}
@@ -251,11 +257,13 @@ const mapStateToProps = (state) => {
 
     console.log('mapStateToProps', state);
 
+    const { email, password, user, error } = state.auth;
+
     return {
-        email: state.auth.email,
-        password: state.auth.password,
-        user: state.auth.user,
-        error: state.auth.error
+        email: email,
+        password: password,
+        user: user,
+        error: error
     };
 };
 

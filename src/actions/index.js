@@ -9,7 +9,7 @@ import {
 
 import firebase from 'firebase';
 
-// ActionCreator
+// ActionCreator 
 export const emailChanged = (text) => {
     return {
         type: EMAIL_CHANGED,

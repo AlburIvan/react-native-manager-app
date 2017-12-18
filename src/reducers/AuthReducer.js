@@ -19,19 +19,19 @@ export default (state = INITIAL_STATE, action) => {
     switch(action.type) {
 
         case EMAIL_CHANGED:
-            return  { ...state, email: action.payload };
+            return  { ...state, email: action.payload,  error: null };
 
         case PASSWORD_CHANGED:
-            return  { ...state, password: action.payload };
+            return  { ...state, password: action.payload, error: null };
 
         case LOGIN_USER_SUCCESS:
-            return  { ...state, user: action.payload };
+            return  { ...state, user: action.payload, error: null };
 
         case LOGIN_USER_FAILED:
             return  { ...state, error: action.payload };
 
         case CREATE_USER_SUCCESS:
-            return  { ...state, user: action.payload };
+            return  { ...state, user: action.payload, error: null };
 
         case CREATE_USER_FAILED:
             return  { ...state, error: action.payload };
