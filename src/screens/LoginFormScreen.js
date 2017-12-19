@@ -19,16 +19,11 @@ import {
     loginUser,
     signupUser
 } from '../actions';
-import {
-     Card, 
-     CardSection, 
-     Input 
-} from "./common";
 import ChromelogoIcon from "../../assets/icons/chromelogo.icon";
 import CancelIcon from "../../assets/icons/cancel.icon";
 
 
-class LoginForm extends Component {
+class LoginFormScreen extends Component {
     constructor(props) {
         super(props);
 
@@ -83,13 +78,15 @@ class LoginForm extends Component {
    
 
     _onLoginButtonPress = () => {
-        const { email, password } = this.props;
+        // const { email, password } = this.props;
         
-        this.setState({
-            loading: true,
-        });
+        // this.setState({
+        //     loading: true,
+        // });
 
-        this.props.loginUser({email, password});
+        // this.props.loginUser({email, password});
+
+        this.props.navigation.navigate('EmployeeList');
     };
 
 
@@ -269,7 +266,7 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, { 
     emailChanged, passwordChanged, loginUser, signupUser
-})(LoginForm);
+})(LoginFormScreen);
 
 const styles = StyleSheet.create({
     kawarecontainer: {

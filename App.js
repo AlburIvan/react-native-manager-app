@@ -10,10 +10,9 @@ import ReduxThunk from 'redux-thunk';
 import reducers from './src/reducers';
 
 import Config from 'react-native-config';
-
-
 import { Header, Spinner } from "./src/components/common";
-import LoginForm from "./src/components/LoginForm";
+import LoginFormScreen from "./src/screens/LoginFormScreen";
+import RootNavigator from './src/screens/RootNavigator';
 
 export default class App extends Component {
 
@@ -32,15 +31,8 @@ export default class App extends Component {
     const store= createStore(reducers, {}, applyMiddleware(ReduxThunk));
     return(
       <Provider store={store} >
-        <LoginForm />
+        <RootNavigator />
       </Provider>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F5FCFF"
-  }
-});
