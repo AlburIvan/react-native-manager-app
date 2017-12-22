@@ -8,6 +8,7 @@ import {
  } from './types';
 
 import firebase from 'firebase';
+import { NavigationActions } from 'react-navigation';
 
 // ActionCreator 
 export const emailChanged = (text) => {
@@ -29,6 +30,7 @@ export const loginUser = ({email, password}) => {
         firebase.auth().signInWithEmailAndPassword(email, password)
             .then((user) => {
                 dispatch({ type: LOGIN_USER_SUCCESS, payload: user});
+                // dispatch(NavigationActions.navigate({routeName: 'EmployeeList'}));
             })
             .catch((err) => {
                 dispatch({ type: LOGIN_USER_FAILED, payload: err});

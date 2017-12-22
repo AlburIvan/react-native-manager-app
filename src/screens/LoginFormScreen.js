@@ -56,39 +56,20 @@ class LoginFormScreen extends Component {
         return <Text style={styles.buttonText}>{"Sign in".toUpperCase()}</Text>;
     };
 
-    /**
-     * functions that handles if the user's login attempt was successfull
-     */
-    _onLoginSuccess = () => {
-        this.setState({
-            email: "",
-            password: "",
-            error: "",
-            loading: false,
-            modalVisible: false
-        });
-    };
-
-
     _onSignupButtonPressed = () => {
         const { email, password } = this.props;
         this.props.signupUser({email, password});
     };
 
-   
-
     _onLoginButtonPress = () => {
-        // const { email, password } = this.props;
+        const { email, password } = this.props;
         
-        // this.setState({
-        //     loading: true,
-        // });
+        this.setState({
+            loading: true,
+        });
 
-        // this.props.loginUser({email, password});
-
-        this.props.navigation.navigate('EmployeeList');
+        this.props.loginUser({email, password});
     };
-
 
     _onEmailChanged = (text) => {
         this.props.emailChanged(text); 
@@ -126,7 +107,6 @@ class LoginFormScreen extends Component {
                 password: '',
                 hasError: true,
                 errMessage: nextProps.error.message,
-                loading: false,
                 modalVisible: true
             });
         } else {
