@@ -1,19 +1,18 @@
 import React, { Component } from "react";
-import { 
-  StyleSheet, 
-  View
-} from "react-native";
+import { StyleSheet } from "react-native";
 import Config from 'react-native-config';
-import firebase from "firebase";
+import { addNavigationHelpers } from 'react-navigation';
+
 import { createStore, applyMiddleware } from 'redux';
-import { Provider } from 'react-redux';
+import { connect, Provider } from 'react-redux';
 import ReduxThunk from 'redux-thunk';
 import reducers from './src/reducers';
+
+import firebase from "firebase";
+
 import { Header, Spinner } from "./src/components/common";
 import LoginFormScreen from "./src/screens/LoginFormScreen";
 import RootNavigator from './src/screens/RootNavigator';
-
-
 
 export default class App extends Component {
 
@@ -33,8 +32,17 @@ export default class App extends Component {
     
     return(
       <Provider store={store} >
-        <RootNavigator />
+        <RootNavigator 
+           /* navigation={addNavigationHelpers({ dispatch, state: navigationState })}*/ />
       </Provider>
     );
   }
 }
+
+// const mapStateToProps = (state) => {
+//   return ({
+//       navigationState: state.NavigationReducer // NavigationReducer contains the navigation state of the app
+//   })
+// }
+
+// export default connect(mapStateToProps)(App)

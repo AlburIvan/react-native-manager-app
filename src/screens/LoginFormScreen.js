@@ -32,7 +32,7 @@ class LoginFormScreen extends Component {
             password: '',
             loading: false,
             hasError: false,
-            errMessage: "Unfortunately, we weren't able to authorize this account, try again.",
+            errMessage: '',
             modalVisible: false
         };
 
@@ -101,6 +101,10 @@ class LoginFormScreen extends Component {
         this.setState({
             loading: false
         });
+
+        if(nextProps.user) {
+            this.props.navigation.navigate('EmployeeList');
+        }
 
         if(nextProps.error) {
             this.setState({

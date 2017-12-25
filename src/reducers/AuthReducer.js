@@ -22,19 +22,19 @@ export default (state = INITIAL_STATE, action) => {
             return  { ...state, email: action.payload,  error: null };
 
         case PASSWORD_CHANGED:
-            return  { ...state, password: action.payload, error: null };
+            return  { ...state, password: action.payload, error: null};
 
         case LOGIN_USER_SUCCESS:
-            return  { ...state, user: action.payload, error: null };
+            return  { ...state, user: action.payload, error: null};
 
         case LOGIN_USER_FAILED:
-            return  { ...state, user: null, error: action.payload };
+            return  { ...state, user: null, error: action.payload};
 
         case CREATE_USER_SUCCESS:
-            return  { ...state, user: action.payload, error: null };
+            return  { ...state, user: action.payload, error: null};
 
         case CREATE_USER_FAILED:
-            return  { ...state, error: action.payload };
+            return  { ...state, user: null, error: action.payload};
 
         default:
             return state;

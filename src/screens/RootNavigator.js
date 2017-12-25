@@ -12,7 +12,8 @@ const RootNavigator = StackNavigator({
     EmployeeList: { 
         screen: EmployeeListScreen,
         navigationOptions: {
-            headerTitle: 'Employee List'
+            headerTitle: 'Employee List',
+            headerLeft: null
         }
     }
 });
