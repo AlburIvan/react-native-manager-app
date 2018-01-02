@@ -1,13 +1,36 @@
-// import { AppNavigator } from 'react-navigation';
+import { NavigationActions } from "react-navigation";
+import { RootNavigator } from "../screens/RootNavigator";
+import {
+  NAVIGATE_TO_LOGIN,
+  NAVIGATE_TO_EMPLOYEE_LIST,
+  NAVIGATE_TO_EMPLOYEE_CREATION
+} from "../actions/types";
 
-// // This produces a redux action ({type: Navigation/NAVIGATE, routeName: 'login'}).
-// const initialAction = AppNavigator.router.getActionForPathAndParams('Login')
+const { router } = RootNavigator;
 
-// const initialState = AppNavigator.router.getStateForAction(initialAction);
+// These produces a redux actions ({type: Navigation/NAVIGATE, routeName: '...'}).
+const loginAction = router.getActionForPathAndParams("Login");
+const employeeListAction = router.getActionForPathAndParams("EmployeeList");
+const employeeCreateAction = router.getActionForPathAndParams("EmployeeCreate");
 
-// const navigationReducer = (state = initialState, action) => {
+const initialState = router.getStateForAction(loginAction);
 
-//     const newState = AppNavigator.router.getStateForAction(action, state)
+export default (navigationReducer = (state = initialState, action) => {
+  let nextState;
 
-//     return newState || state;
-// }
+  switch (action.type) {
+    case NAVIGATE_TO_LOGIN:
+      nextState = router.getStateForAction(loginAction, state);
+      break;
+
+    case NAVIGATE_TO_EMPLOYEE_LIST:
+      nextState = router.getStateForAction(employeeListAction, state);
+      break;
+
+    case NAVIGATE_TO_EMPLOYEE_CREATION:
+      nextState = router.getStateForAction(employeeCreateAction, state);
+      break;
+  }
+
+  return nextState || state;
+});

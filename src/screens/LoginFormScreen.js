@@ -18,7 +18,7 @@ import {
     passwordChanged,
     loginUser,
     signupUser
-} from '../actions';
+} from '../actions/AuthActionCreator';
 import ChromelogoIcon from "../../assets/icons/chromelogo.icon";
 import CancelIcon from "../../assets/icons/cancel.icon";
 
@@ -68,7 +68,9 @@ class LoginFormScreen extends Component {
             loading: true,
         });
 
-        this.props.loginUser({email, password});
+        this.props.navigation.dispatch({ type: 'navigation.route.employee_list' });
+
+        //this.props.loginUser({email, password});
     };
 
     _onEmailChanged = (text) => {
@@ -80,7 +82,7 @@ class LoginFormScreen extends Component {
     }
 
     
-    /**
+    /** 
      * functions that handles if the user's login attempt was failed
      */
     resetErrorState = () => {
@@ -101,10 +103,6 @@ class LoginFormScreen extends Component {
         this.setState({
             loading: false
         });
-
-        if(nextProps.user) {
-            this.props.navigation.navigate('EmployeeList');
-        }
 
         if(nextProps.error) {
             this.setState({
