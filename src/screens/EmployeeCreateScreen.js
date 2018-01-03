@@ -39,14 +39,12 @@ class EmployeeCreate extends Component {
         style={{ backgroundColor: "#4c69a5" }}
         resetScrollToCoords={{ x: 0, y: 0 }}
         contentContainerStyle={styles.kawarecontainer}
-        scrollEnabled={true}
-      >
+        scrollEnabled={true}>
         <View style={styles.container}>
           <ScrollView
             style={styles.scrollviewContainer}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ flexGrow: 1 }}
-          >
+            contentContainerStyle={{ flexGrow: 1 }}>
             <View style={styles.formContainer}>
               <View style={styles.usernameField}>
                 <Text style={styles.usernameLabel}>Name</Text>
@@ -85,7 +83,7 @@ class EmployeeCreate extends Component {
 										onPress={this.onLoginButtonPress}
 										underlayColor="white">
 										<View style={styles.submitButton}>
-											<Text>Save</Text>
+											<Text style={styles.buttonText}>Save</Text>
 										</View>
 								</TouchableHighlight>
 							</View>
@@ -171,6 +169,7 @@ const styles = StyleSheet.create({
 		height: 50
 	},
 	submitField: {
+		flex: 2,
 		marginTop: 15,
 		marginLeft: 35,
 		marginRight: 35
