@@ -68,9 +68,9 @@ class LoginFormScreen extends Component {
             loading: true,
         });
 
-        this.props.navigation.dispatch({ type: 'navigation.route.employee_list' });
+        // this.props.navigation.dispatch({ type: 'navigation.route.employee_list' });
 
-        //this.props.loginUser({email, password});
+        this.props.loginUser({email, password});
     };
 
     _onEmailChanged = (text) => {

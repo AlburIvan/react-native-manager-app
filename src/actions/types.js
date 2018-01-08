@@ -14,6 +14,10 @@ export const CREATE_USER_SUCCESS    = 'auth.state.create_acc_success';
 export const CREATE_USER_FAILED     = 'auth.state.create_acc_failed';
 
 // [Employee Reducer]
-export const EMPLOYEE_UPDATE        = 'employee.state.employee_update';
+export const EMPLOYEE_UPDATE                = 'employee.state.employee_update';
+export const RESET_EMPLOYEE_CREATE_FORM     = 'employee.state.form.reset';
+export const EMPLOYEES_FETCH_SUCCESS        = 'employee.state.fetch_all.success';
+export const EMPLOYEES_FETCH_FAILED         = 'employee.state.fetch_all.failed';
+
 
 
