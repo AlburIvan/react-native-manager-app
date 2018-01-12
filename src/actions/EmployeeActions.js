@@ -2,7 +2,9 @@ import {
   EMAIL_CHANGED,
   PASSWORD_CHANGED,
   NAVIGATE_TO_EMPLOYEE_CREATION,
+  NAVIGATE_TO_EMPLOYEE_EDIT,
   EMPLOYEE_UPDATE,
+  SELECTED_EMPLOYEE,
   NAVIGATE_TO_EMPLOYEE_LIST,
   RESET_EMPLOYEE_CREATE_FORM,
   EMPLOYEES_FETCH_SUCCESS,
@@ -31,6 +33,14 @@ export const openEmployeeCreationForm = () => {
   };
 };
 
+export const employeeEdit = ({ employee }) => {
+  return(dispatch) => {
+    dispatch({ type: NAVIGATE_TO_EMPLOYEE_EDIT })
+    dispatch({ type: SELECTED_EMPLOYEE, payload: employee })
+  }
+};
+
+
 export const employeeUpdate = ({ prop, value }) => {
   return {
     type: EMPLOYEE_UPDATE,
@@ -54,6 +64,22 @@ export const employeeCreate = ({ name, phone, shift }) => {
   }
 };
 
+export const employeeSave = ({ name, phone, shift, uid }) => {
+  const { currentUser } = firebase.auth();
+
+  return(dispatch) => {
+    firebase
+      .database()
+      .ref(`/users/${currentUser.uid}/employees/${uid}`)
+      .set({ name, phone, shift })
+      .then(() => {
+        dispatch({ type: NAVIGATE_TO_EMPLOYEE_LIST })
+        dispatch({ type: RESET_EMPLOYEE_CREATE_FORM })
+      })
+      .catch(err => console.log(err));
+  }
+};
+
 
 export const fetchEmployees = () => {
   const { currentUser } = firebase.auth();
@@ -63,6 +89,7 @@ export const fetchEmployees = () => {
       .database()
       .ref(`/users/${currentUser.uid}/employees`)
       .on('value', snapshot => {
+        console.log(`snapshot: `, snapshot.val());
         dispatch({ type: EMPLOYEES_FETCH_SUCCESS, payload: snapshot.val() })
       });
   };

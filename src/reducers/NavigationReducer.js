@@ -3,7 +3,8 @@ import { RootNavigator } from "../screens/RootNavigator";
 import {
   NAVIGATE_TO_LOGIN,
   NAVIGATE_TO_EMPLOYEE_LIST,
-  NAVIGATE_TO_EMPLOYEE_CREATION
+  NAVIGATE_TO_EMPLOYEE_CREATION,
+  NAVIGATE_TO_EMPLOYEE_EDIT
 } from "../actions/types";
 
 const { router } = RootNavigator;
@@ -12,6 +13,7 @@ const { router } = RootNavigator;
 const loginAction = router.getActionForPathAndParams("Login");
 const employeeListAction = router.getActionForPathAndParams("EmployeeList");
 const employeeCreateAction = router.getActionForPathAndParams("EmployeeCreate");
+const employeeEditFormAction = router.getActionForPathAndParams("EmployeeEdit");
 
 const initialState = router.getStateForAction(loginAction);
 
@@ -29,6 +31,10 @@ export default (navigationReducer = (state = initialState, action) => {
 
     case NAVIGATE_TO_EMPLOYEE_CREATION:
       nextState = router.getStateForAction(employeeCreateAction, state);
+      break;
+
+    case NAVIGATE_TO_EMPLOYEE_EDIT:
+      nextState = router.getStateForAction(employeeEditFormAction, state);
       break;
   }
 

@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { BackHandler } from 'react-native';
 import { connect } from 'react-redux';
-import { addNavigationHelpers, StackNavigator, HeaderBackButton } from "react-navigation";
+import { addNavigationHelpers, StackNavigator, NavigationActions } from "react-navigation";
 
 import LoginFormScreen from "./LoginFormScreen";
 import EmployeeListScreen from "./EmployeeListScreen";
 import EmployeeCreateScreen from './EmployeeCreateScreen';
+import EmployeeEditForm from './EmployeeEditForm';
 
 export const RootNavigator = StackNavigator({
   Login: {
@@ -25,9 +26,15 @@ export const RootNavigator = StackNavigator({
     screen: EmployeeCreateScreen,
     navigationOptions: ({ navigation }) => ({
       headerTitle: 'Create an Employee',
-      headerLeft: <HeaderBackButton onPress={() => navigation.goBack('EmployeeList')} />,
     })
-  }
+  },
+  EmployeeEdit: {
+    screen: EmployeeEditForm,
+    navigationOptions: ({ navigation }) => ({
+      headerTitle: `Edit ${console.log(navigation)}`,
+    })
+  },
+  
 });
 
 
@@ -42,12 +49,13 @@ class AppWithNavigationState extends Component {
 
   onBackPress = () => {
     const { dispatch, nav } = this.props;
+
     if (nav.index === 0) {
       return false;
     }
-    dispatch({
-      type: 'Navigation/BACK'
-    })
+
+    dispatch(NavigationActions.back())
+
     return true;
   };
 
@@ -55,7 +63,7 @@ class AppWithNavigationState extends Component {
     const { dispatch, nav } = this.props;
     return (
       <RootNavigator
-        navigation={addNavigationHelpers({ dispatch, state: nav })}
+        navigation={ addNavigationHelpers({ dispatch, state: nav }) }
       />
     );
   }

@@ -1,25 +1,33 @@
 import React, { Component } from "react";
-import { View, Text, ScrollView, StyleSheet, TouchableHighlight } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  TouchableHighlight
+} from "react-native";
 import { connect } from "react-redux";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-
-import { employeeUpdate, employeeCreate } from "../actions/EmployeeActions";
+import _ from "lodash";
+import { employeeUpdate, employeeSave } from "../actions/EmployeeActions";
 import EmployeeForm from "../components/common/EmployeeForm";
 
-class EmployeeCreateScreen extends Component {
+class EmployeeEditForm extends Component {
   constructor(props) {
     super(props);
+    this.onButtonPressed = this.onFormSubmit.bind(this);
+  }
 
-    this.onEmployeeFormSubmit = this.onFormSubmit.bind(this);
+  componentWillMount() {
+    _.each(this.props.employee, (value, prop) => {
+      this.props.employeeUpdate({ prop, value });
+    });
   }
 
   onFormSubmit() {
     const { name, phone, shift } = this.props;
-
-    this.props.employeeCreate({ name, phone, shift: shift || "Monday" });
+    this.props.employeeSave({ name, phone, shift, uid: this.props.employee.uid  });
   }
-
- 
 
   render() {
     return (
@@ -27,23 +35,21 @@ class EmployeeCreateScreen extends Component {
         style={{ backgroundColor: "#4c69a5" }}
         resetScrollToCoords={{ x: 0, y: 0 }}
         contentContainerStyle={styles.kawarecontainer}
-        scrollEnabled={true}
-      >
+        scrollEnabled={true}>
         <View style={styles.container}>
           <ScrollView
             style={styles.scrollviewContainer}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ flexGrow: 1 }}
-          >
+            contentContainerStyle={{ flexGrow: 1 }}>
             <EmployeeForm {...this.props} />
 
             <View style={styles.submitField}>
               <TouchableHighlight
                 disabled={this.props.disabled}
-                onPress={this.onEmployeeFormSubmit}
+                onPress={this.onButtonPressed}
                 underlayColor="white">
-                <View style={[styles.submitButton, { backgroundColor: this.props.disabled ? '#AAAAAA' : '#4ed589'}]}>
-                  <Text style={styles.buttonText}>Create</Text>
+                <View style={styles.submitButton}>
+                  <Text style={styles.buttonText}>Save Changes</Text>
                 </View>
               </TouchableHighlight>
             </View>
@@ -55,15 +61,15 @@ class EmployeeCreateScreen extends Component {
 }
 
 const mapStateToProps = state => {
-  const { name, phone, shift, disabled } = state.employeeForm;
+  const { name, phone, shift, employee } = state.employeeForm;
 
-  return { name, phone, shift, disabled };
+  return { name, phone, shift, employee };
 };
 
 export default connect(mapStateToProps, {
   employeeUpdate,
-  employeeCreate
-})(EmployeeCreateScreen);
+  employeeSave
+})(EmployeeEditForm);
 
 const styles = StyleSheet.create({
   kawarecontainer: {

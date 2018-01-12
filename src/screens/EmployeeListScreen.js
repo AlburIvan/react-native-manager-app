@@ -9,39 +9,39 @@ import _ from 'lodash';
 
 import {
   openEmployeeCreationForm,
-  fetchEmployees
+  fetchEmployees,
+  employeeEdit
 } from "../actions/EmployeeActions";
 
 class EmployeeListScreen extends Component {
+  
   constructor(props) {
     super(props);
 
     this.onFABClicked = this._onFABClicked.bind(this);
-    this.onRowPress = this._onRowPress.bind(this);
-    
+    this.onRowPress   = this._onRowPress.bind(this);
   }
 
   componentWillMount() {
-    //this.props.fetchEmployees();
+    this.props.fetchEmployees();
   }
-
-  componentWillReceiveProps(nextProps) {}
 
   _onFABClicked() {
     this.props.openEmployeeCreationForm();
   }
 
   _onRowPress(employee) {
-    this.props.openEmployeeCreationForm({ employee: employee });
+    this.props.employeeEdit({ employee: employee });
   }
 
   renderRow(employee) {
     return (
       <View style={styles.rowItem}>
         <TouchableWithoutFeedback
-          onPress={this.onRowPress(employee)}
-          >
-          <Text key={employee.uid} style={styles.rowItemText}>{employee.name} with shift on {employee.shift}</Text>
+          onPress={() => this.onRowPress(employee)}>
+          <View>
+            <Text key={employee.uid} style={styles.rowItemText}>{employee.name} with shift on {employee.shift}</Text>
+          </View>
         </TouchableWithoutFeedback>
       </View>
     ) 
@@ -78,7 +78,8 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   openEmployeeCreationForm,
-  fetchEmployees
+  fetchEmployees,
+  employeeEdit
 })(EmployeeListScreen);
 
 const styles = StyleSheet.create({
